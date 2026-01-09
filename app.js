@@ -1,5 +1,40 @@
 let editor;
-let fileHandle = null;
+let currentFile = "html";
+
+/* ---------------- FILE CONTENT ---------------- */
+
+const files = {
+  html: `<!DOCTYPE html>
+<html>
+  <head>
+    <title>Abhinu’s WebCode</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <h1>Hello User!</h1>
+    <p>Edit HTML, CSS, and JS using the top buttons.</p>
+    <script src="script.js"></script>
+  </body>
+</html>`,
+
+  css: `body {
+  background: black;
+  color: gold;
+  font-family: system-ui;
+}`,
+
+  js: `console.log("WebCode Core IDE ready 🚀");`
+};
+
+/* ---------------- FILE HANDLES ---------------- */
+
+const fileHandles = {
+  html: null,
+  css: null,
+  js: null
+};
+
+/* ---------------- MONACO ---------------- */
 
 require.config({
   paths: {
@@ -12,102 +47,130 @@ require(["vs/editor/editor.main"], () => {
   editor = monaco.editor.create(
     document.getElementById("editor-container"),
     {
-      value: `<!DOCTYPE html>
-<html>
-  <body style="background:black">
-    <h1 style="color:gold">Abhinu’s WebCode Core IDE</h1>
-    <p style="color:white">Live preview is enabled.</p>
-  </body>
-</html>`,
+      value: files.html,
       language: "html",
       theme: "vs-dark",
       automaticLayout: true
     }
   );
 
+  // Emmet
   emmetMonaco.emmetHTML(monaco);
   emmetMonaco.emmetCSS(monaco);
 
   const preview = document.getElementById("preview-frame");
-  const splitter = document.getElementById("splitter");
-  const ide = document.getElementById("ide");
 
-  /* ---------- PREVIEW ---------- */
+  /* ---------------- PREVIEW ---------------- */
 
-  const updatePreview = () => {
-    preview.srcdoc = editor.getValue();
-  };
+  function updatePreview() {
+    preview.srcdoc = `
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>${files.css}</style>
+  </head>
+  <body>
+    ${files.html}
+    <script>${files.js}<\/script>
+  </body>
+</html>`;
+  }
 
   updatePreview();
-  editor.onDidChangeModelContent(updatePreview);
 
-  /* ---------- RESIZE ---------- */
-
-  let dragging = false;
-
-  splitter.addEventListener("mousedown", () => {
-    dragging = true;
-    document.body.style.cursor = "col-resize";
+  editor.onDidChangeModelContent(() => {
+    files[currentFile] = editor.getValue();
+    updatePreview();
   });
 
-  window.addEventListener("mouseup", () => {
-    dragging = false;
-    document.body.style.cursor = "default";
-  });
+  /* ---------------- FILE SWITCHING ---------------- */
 
-  window.addEventListener("mousemove", (e) => {
-    if (!dragging) return;
+  function switchFile(type, language) {
+    files[currentFile] = editor.getValue();
+    currentFile = type;
 
-    const rect = ide.getBoundingClientRect();
-    const x = e.clientX - rect.left;
+    editor.setValue(files[type]);
+    monaco.editor.setModelLanguage(editor.getModel(), language);
+  }
 
-    const min = rect.width * 0.25;
-    const max = rect.width * 0.75;
+  document.getElementById("html-btn").onclick = () =>
+    switchFile("html", "html");
 
-    if (x < min || x > max) return;
+  document.getElementById("css-btn").onclick = () =>
+    switchFile("css", "css");
 
-    ide.style.gridTemplateColumns = `${x}px 6px 1fr`;
-  });
+  document.getElementById("js-btn").onclick = () =>
+    switchFile("js", "javascript");
 
-  /* ---------- FILE SYSTEM ---------- */
+  /* ---------------- FILE SYSTEM ---------------- */
+
+  async function saveFile() {
+    let handle = fileHandles[currentFile];
+
+    if (!handle) {
+      const names = {
+        html: "index.html",
+        css: "style.css",
+        js: "script.js"
+      };
+
+      handle = await window.showSaveFilePicker({
+        suggestedName: names[currentFile],
+        types: [
+          {
+            description: "Web File",
+            accept: {
+              "text/plain": [
+                currentFile === "html" ? ".html" :
+                currentFile === "css" ? ".css" : ".js"
+              ]
+            }
+          }
+        ]
+      });
+
+      fileHandles[currentFile] = handle;
+    }
+
+    const writable = await handle.createWritable();
+    await writable.write(files[currentFile]);
+    await writable.close();
+  }
 
   async function openFile() {
     try {
-      [fileHandle] = await window.showOpenFilePicker({
-        types: [{
-          description: "HTML Files",
-          accept: { "text/html": [".html"] }
-        }]
-      });
+      const [handle] = await window.showOpenFilePicker();
+      const file = await handle.getFile();
+      const text = await file.text();
 
-      const file = await fileHandle.getFile();
-      editor.setValue(await file.text());
+      if (file.name.endsWith(".html")) {
+        currentFile = "html";
+        fileHandles.html = handle;
+        editor.setValue(text);
+        monaco.editor.setModelLanguage(editor.getModel(), "html");
+      } 
+      else if (file.name.endsWith(".css")) {
+        currentFile = "css";
+        fileHandles.css = handle;
+        editor.setValue(text);
+        monaco.editor.setModelLanguage(editor.getModel(), "css");
+      } 
+      else if (file.name.endsWith(".js")) {
+        currentFile = "js";
+        fileHandles.js = handle;
+        editor.setValue(text);
+        monaco.editor.setModelLanguage(editor.getModel(), "javascript");
+      }
+
+      files[currentFile] = text;
       updatePreview();
     } catch {}
   }
 
-  async function saveFile() {
-    if (!fileHandle) {
-      fileHandle = await window.showSaveFilePicker({
-        suggestedName: "index.html",
-        types: [{
-          description: "HTML Files",
-          accept: { "text/html": [".html"] }
-        }]
-      });
-    }
-
-    const writable = await fileHandle.createWritable();
-    await writable.write(editor.getValue());
-    await writable.close();
-  }
-
-  /* ---------- BUTTONS ---------- */
-
-  document.getElementById("open-btn").onclick = openFile;
   document.getElementById("save-btn").onclick = saveFile;
+  document.getElementById("open-btn").onclick = openFile;
 
-  /* ---------- SHORTCUTS ---------- */
+  /* ---------------- SHORTCUTS ---------------- */
 
   window.addEventListener("keydown", (e) => {
     if (e.ctrlKey && e.key === "s") {
@@ -120,5 +183,5 @@ require(["vs/editor/editor.main"], () => {
     }
   });
 
-  console.log("Abhinu’s WebCode Core IDE ready 🚀");
+  console.log("Abhinu’s WebCode Core IDE — stable & correct 🚀");
 });
