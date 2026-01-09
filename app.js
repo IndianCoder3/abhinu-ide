@@ -184,4 +184,31 @@ require(["vs/editor/editor.main"], () => {
   });
 
   console.log("Abhinu’s WebCode Core IDE — stable & correct 🚀");
+
+  function newProject() {
+    const ok = confirm("Create a new project? Unsaved changes will be lost.");
+    if (!ok) return;
+
+    files.html = "";
+    files.css = "";
+    files.js = "";
+
+    currentFile = "html";
+    fileHandle = null;
+
+    editor.setValue("");
+    monaco.editor.setModelLanguage(editor.getModel(), "html");
+
+    updatePreview();
+  }
+
+  document.getElementById("new-btn").onclick = newProject;
+
+  window.addEventListener("keydown", (e) => {
+    if (e.ctrlKey && e.key === "n") {
+      e.preventDefault();
+      newProject();
+    }
+  });
+
 });
