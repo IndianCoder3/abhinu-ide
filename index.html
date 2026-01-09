@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Abhinu’s WebCode Core IDE</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- TOP TOOLBAR -->
+  <div id="toolbar">
+    <div class="toolbar-left">
+      Abhinu’s <span>WebCode Core IDE</span>
+    </div>
+
+    <div class="toolbar-center">
+      <button id="open-btn">Open</button>
+      <button id="save-btn">Save</button>
+    </div>
+
+    <div class="toolbar-right">
+      ●  Live Preview
+    </div>
+  </div>
+
+  <!-- IDE -->
+  <div id="ide">
+    <div id="editor-container"></div>
+    <div id="splitter"></div>
+    <iframe id="preview-frame"></iframe>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/loader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/emmet-monaco-es/dist/emmet-monaco.min.js"></script>
+  <script src="app.js"></script>
+
+</body>
+</html>
