@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Abhinu’s AbhinuCode Core IDE</title>
+
+  <meta name="description"
+        content="Abhinu’s AbhinuCode Core IDE is a lightweight online IDE for HTML, CSS, and JavaScript with live preview and Emmet support." />
+
+  <meta name="author" content="Abhinu Gupta" />
+
+  <link rel="canonical" href="https://indiancoder3.github.io/abhinu-ide/" />
+
+  <meta property="og:title" content="Abhinu’s AbhinuCode Core IDE" />
+  <meta property="og:description"
+        content="A fast, beginner-friendly web IDE for HTML, CSS & JavaScript." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://indiancoder3.github.io/abhinu-ide/" />
+  <meta property="og:image" content="https://indiancoder3.github.io/images/logo.png" />
+
+  <link rel="icon" href="https://indiancoder3.github.io/images/logo.png" />
+
+  <meta name="theme-color" content="#1e1e1e" />
+
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+
+  <!-- TOP TOOLBAR -->
+  <div id="toolbar">
+    <div class="toolbar-left">
+      <a href="https://github.com/IndianCoder3/abhinu-ide">
+        <img src="logo.png" alt="Logo" width="30" height="30" align="center">
+        <span>AbhinuCode Core IDE</span>
+      </a>
+    </div>
+
+    <div class="toolbar-center">
+      <button id="html-btn">HTML</button>
+      <button id="css-btn">CSS</button>
+      <button id="js-btn">JS</button>
+
+      <span class="sep"></span>
+
+      <button id="open-btn">Open</button>
+      <button id="save-btn">Save</button>
+      <button id="new-btn">New Project</button>
+    </div>
+
+    <div class="toolbar-right">
+      ●  Live Preview
+    </div>
+  </div>
+
+  <!-- IDE -->
+  <div id="ide">
+    <div id="editor-container"></div>
+    <div id="splitter"></div>
+    <iframe id="preview-frame"></iframe>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/loader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/emmet-monaco-es/dist/emmet-monaco.min.js"></script>
+  <script src="app.js"></script>
+
+</body>
+</html>
