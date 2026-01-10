@@ -7,7 +7,7 @@ const files = {
   html: `<!DOCTYPE html>
 <html>
   <head>
-    <title>Abhinu’s WebCode</title>
+    <title>Abhinu’s AbhinuCode</title>
     <link rel="stylesheet" href="style.css">
   </head>
   <body>
@@ -23,7 +23,7 @@ const files = {
   font-family: system-ui;
 }`,
 
-  js: `console.log("WebCode Core IDE ready 🚀");`
+  js: `console.log("AbhinuCode Core IDE ready 🚀");`
 };
 
 /* ---------------- FILE HANDLES ---------------- */
@@ -274,5 +274,5 @@ ${files.html}
     if (e.ctrlKey && e.key === "n") { e.preventDefault(); newProject(); }
   });
 
-  console.log("Abhinu’s WebCode Core IDE — fixed & stable ✅");
+  console.log("Abhinu’s AbhinuCode Core IDE — fixed & stable ✅");
 });
